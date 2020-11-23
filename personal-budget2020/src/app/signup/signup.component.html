@@ -1,0 +1,20 @@
+
+ <main id="main-holder">
+  <h1 id="login-header">SignUp</h1>
+
+  <div id="login-error-msg-holder">
+    <p id="login-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p>
+  </div>
+
+  <form id="login-form">
+    <input type="text" name="firstname" id="firstname-field" class="login-form-field" placeholder="Firstname">
+    <input type="text" name="lastname" id="lastname-field" class="login-form-field" placeholder="Lastname">
+    <input type="text" name="email" id="email-field" class="login-form-field" placeholder="Email">
+    <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+    <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+    <input type="password" name="confirm_password" id="confirm_password-field" class="login-form-field" placeholder="Confirm Password">
+    <input type="submit" value="Signup" id="signup-form-submit" (click) = "signUpNewUser()">
+  </form>
+
+</main>
+
