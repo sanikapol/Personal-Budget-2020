@@ -1,4 +1,7 @@
 const mongoose = require('mongoose')
+var uniqueValidator = require('mongoose-unique-validator');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
     firstname: {
@@ -31,13 +34,26 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true,
-        minlength: 5,
-        maxlength: 20,
-        unique: true,
+        minlength: 6,
+        maxlength: 150,
     },
     // date: {
-        
+    //     type: Date,
     // },
 }, {collection: 'users'})
 
+userSchema.methods.hashPassword = async (password) => {
+    return await bcrypt.hashSync(password, 10);
+}
+userSchema.methods.compareUserPassword = async (inputtedPassword, hashedPassword) => {
+    return await bcrypt.compare(inputtedPassword, hashedPassword)
+}
+userSchema.methods.generateJwtToken = async (payload, secret, expires) => {
+    return jwt.sign(payload, secret, expires)
+}
+
 module.exports = mongoose.model('users',userSchema)
+
+userSchema.plugin(uniqueValidator, {
+    message: '{PATH} Already in use'
+});

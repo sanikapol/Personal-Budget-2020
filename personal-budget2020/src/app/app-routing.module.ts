@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ConfigureBudgetComponent } from './configure-budget/configure-budget.component';
 import { SignupComponent } from './signup/signup.component';
 import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './guard/auth.guard';
 
 const routes: Routes = [
   {
@@ -14,10 +15,12 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
+    canActivate: [ AuthGuard ],
     component: DashboardComponent,
   },
   {
     path: 'configurebudget',
+    canActivate: [ AuthGuard ],
     component: ConfigureBudgetComponent
   },
   {

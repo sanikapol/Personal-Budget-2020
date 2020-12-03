@@ -1,18 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-
-  public user = {
-    firstname: "",
-    lastname: "",
-    email: "",
-    username: "sanika",
-    password: ""
-  };
 
   public dataSource = {
     datasets:[
@@ -82,11 +75,12 @@ export class DataService {
     labels: []
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, public UserService:UserService) { }
 
   getBudgetData(){
-    console.log("Inide getBudget");
-    const url = 'http://localhost:3000/budget/' + this.user.username;
+    console.log(this.UserService.user.username);
+    const url = 'http://localhost:3000/budget/' + this.UserService.user.username;
+
     this.http.get(url)
     .subscribe((res: any) => {
       console.log("Budget: " + res);
@@ -100,8 +94,7 @@ export class DataService {
   }
 
   getExpenses(){
-    console.log("Inide getBudget");
-    const url = 'http://localhost:3000/expenses/' + this.user.username;
+    const url = 'http://localhost:3000/expenses/' + this.UserService.user.username;
     this.http.get(url)
     .subscribe((res: any) => {
       console.log("Expenses: " + res);
@@ -115,8 +108,7 @@ export class DataService {
   }
 
   getBudgetAnDExpenses(){
-    console.log("Inide getBudget");
-    const url = 'http://localhost:3000/budget-expenses/' + this.user.username + "/Movies";
+    const url = 'http://localhost:3000/budget-expenses/' + this.UserService.user.username + "/Movies";
     this.http.get(url)
     .subscribe((res: any) => {
       console.log("budget-expenses: " + res);
@@ -130,10 +122,5 @@ export class DataService {
     });
   }
 
-  signUpNewUser(){
-    this.http.post('http://localhost:3000/signup/',this.user)
-    .subscribe((res: any) => {
 
-    });
-  }
 }

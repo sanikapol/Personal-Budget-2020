@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-
+import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpConfigInterceptor } from '../../src/app/interceptor/httpconfig.interceptor';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomepageComponent } from './homepage/homepage.component';
@@ -12,7 +12,12 @@ import { ConfigureBudgetComponent } from './configure-budget/configure-budget.co
 import { FooterComponent } from './footer/footer.component';
 import { HeroComponent } from './hero/hero.component';
 import { MenuComponent } from './menu/menu.component';
-import { DataService } from './data.service';
+import { DataService } from './services/data.service';
+import { UserService } from './services/user.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
+
 
 @NgModule({
   declarations: [
@@ -29,9 +34,16 @@ import { DataService } from './data.service';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
-  providers: [DataService],
+  providers: [DataService,UserService,
+    {
+    provide: HTTP_INTERCEPTORS,
+    useClass: HttpConfigInterceptor,
+    multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
