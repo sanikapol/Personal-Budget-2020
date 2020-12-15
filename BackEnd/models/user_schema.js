@@ -37,9 +37,6 @@ const userSchema = new mongoose.Schema({
         minlength: 6,
         maxlength: 150,
     },
-    // date: {
-    //     type: Date,
-    // },
 }, {collection: 'users'})
 
 userSchema.methods.hashPassword = async (password) => {

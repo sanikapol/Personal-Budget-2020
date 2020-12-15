@@ -1,5 +1,5 @@
 
- <div class="card">
+ <!-- <div class="card">
   <h4 class="card-header">SignUp</h4>
   <div class="card-body">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -48,5 +48,47 @@
           </div>
       </form>
   </div>
-</div>
+</div> -->
 
+<pb-hero></pb-hero>
+<section>
+  <mat-grid-list cols="3">
+    <mat-grid-tile colspan="3">
+      <mat-card>
+        <mat-card-header color="primary">
+          <mat-card-title>Signup Form</mat-card-title>
+        </mat-card-header>
+        <form [formGroup]="signupForm" (submit)="createUser()">
+          <mat-form-field style="width:400px !important">
+            <mat-label>Firstname</mat-label>
+            <input formControlName="firstname" matInput>
+          </mat-form-field>
+          <br>
+          <mat-form-field style="width:400px !important">
+            <mat-label>Lastname</mat-label>
+            <input formControlName="lastname" matInput>
+          </mat-form-field>
+          <br>
+          <mat-form-field style="width:400px !important">
+            <mat-label>Email</mat-label>
+            <input formControlName="email" matInput>
+          </mat-form-field>
+          <br>
+          <mat-form-field style="width:400px !important">
+            <mat-label>Username</mat-label>
+            <input formControlName="username" matInput>
+          </mat-form-field>
+          <br>
+          <mat-form-field style="width:400px !important">
+            <mat-label>Password</mat-label>
+            <input type="password" formControlName="password" matInput>
+          </mat-form-field>
+          <br>
+          <button mat-raised-button color="primary">Submit</button>
+          <div class="divider"></div>
+          <button mat-raised-button color="primary" (click)="cancel()" >Cancel</button>
+        </form>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</section>

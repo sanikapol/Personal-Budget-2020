@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl,FormGroup,FormBuilder, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -13,44 +14,41 @@ import { UserService } from '../services/user.service';
 
 export class SignupComponent implements OnInit {
 
-  form: FormGroup;
-  loading = false;
-  submitted = false;
 
-  newUser = {
-    firstname: "",
-    lastname: "",
-    email: "",
-    username: "",
-    password: ""
-  };
+  constructor(private userService: UserService, private router: Router,private snackBar: MatSnackBar,private formBuilder: FormBuilder,) { }
 
-  constructor(private userService: UserService, private router: Router,private formBuilder: FormBuilder,) { }
+  signupForm = new FormGroup({
+    firstname: new FormControl(''),
+    lastname: new FormControl(''),
+    email: new FormControl(''),
+    username: new FormControl(''),
+    password: new FormControl('')
+  });
 
-  ngOnInit(): void {
-    this.form = this.formBuilder.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', Validators.required],
-      username: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
+  async createUser() {
+    //console.log(this.signupForm.value);
+    await this.mapUser();
+    // console.log("user set");
+    // console.log(this.userService.user);
+    this.userService.createNewUser();
   }
 
-  get f() { return this.form.controls; }
+  ngOnInit(): void {
 
-  onSubmit() {
-    this.submitted = true;
+  }
 
-    // stop here if form is invalid
-    if (this.form.invalid) {
-        return;
-    }
 
-    this.loading = true;
-    console.log(this.form.value);
-    this.userService.createNewUser(this.newUser)
+  mapUser(){
+    this.userService.user.firstname = this.signupForm.value.firstname;
+    this.userService.user.lastname = this.signupForm.value.lastname;
+    this.userService.user.email = this.signupForm.value.email;
+    this.userService.user.username = this.signupForm.value.username;
+    this.userService.user.password = this.signupForm.value.password;
+  }
 
-}
+  cancel(){
+    this.router.navigate([ '/login' ]);
+  }
+
 
 }

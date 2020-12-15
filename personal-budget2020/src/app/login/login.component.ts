@@ -10,34 +10,25 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  form: FormGroup;
-  loading = false;
-  submitted = false;
 
   constructor(private userService: UserService, private router: Router,private formBuilder: FormBuilder) { }
 
+  loginForm = new FormGroup({
+    username: new FormControl(''),
+    password: new FormControl('')
+  });
 
-  ngOnInit(): void {
-    this.form = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
+  loginUser() {
+    //console.log(this.loginForm.value);
+    this.userService.userLogin(this.loginForm.value.username, this.loginForm.value.password);
   }
 
-  get f() { return this.form.controls; }
+  ngOnInit(): void {
 
-  onSubmit() {
-    this.submitted = true;
+  }
 
-    // stop here if form is invalid
-    if (this.form.invalid) {
-        return;
-    }
-
-    this.loading = true;
-    this.userService.userLogin(this.f.username.value, this.f.password.value);
-
-}
-
+  gotoSignUp(){
+    this.router.navigate(['/signup'])
+  }
 
 }

@@ -1,3 +1,38 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$personal-budget2020-primary: mat-palette($mat-indigo);
+$personal-budget2020-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$personal-budget2020-warn: mat-palette($mat-red);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$personal-budget2020-theme: mat-light-theme((
+  color: (
+    primary: $personal-budget2020-primary,
+    accent: $personal-budget2020-accent,
+    warn: $personal-budget2020-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($personal-budget2020-theme);
+
 /* You can add global styles to this file, and also import other style files */
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
@@ -361,7 +396,7 @@ body {
 
 header.hero {
   height: 350px;
-  background-color: #b4c6f0;
+  background-color: #b8b4f0;
   background-image: url('/assets/bg.png');
   background-size: 400px;
   background-repeat: no-repeat;
@@ -376,7 +411,7 @@ header.hero h2 {
 }
 
 header.hero h1 {
-  color: #fff;
+  color: rgb(255, 255, 255);
   font-size: 4.2em;
   margin-bottom: 20px;
 }
@@ -429,3 +464,6 @@ header.hero h2 {
       margin: 10px;
   }
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

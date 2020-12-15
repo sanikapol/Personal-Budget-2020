@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { UserService } from './user.service';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -8,52 +8,45 @@ import { UserService } from './user.service';
 export class DataService {
 
   public dataSource = {
-    datasets:[
-        {
-            //data: [380,90,100,50],
-            data: [],
-            backgroundColor: [
-                '#ffcd56',
-                '#ff6384',
-                '#36a2eb',
-                '#fd6b19',
-                '#99ff33',
-                '#ff9900',
-                '#00ffcc',
-                '#99ff99',
-                '#cc66ff',
-                '#cc6699',
-                '#3366cc',
-                '#660066',
-            ],
-        }
-    ],
-    //labels: ['Rent','Eat Out','Groceries','Movies']
-    labels: []
-  };
+    labels: [],
+    datasets: [{
+        data: [],
+        backgroundColor: [
+          'rgba(255, 99, 132,1.0)',
+          'rgba(54, 162, 235, 1.0)',
+          'rgba(255, 206, 86, 1.0)',
+          'rgba(75, 192, 192, 1.0)',
+          'rgba(153, 102, 255, 1.0)',
+          'rgba(140, 159, 86, 1.0)',
+          'rgba(78, 103, 4, 1.0)',
+          'rgba(250, 167, 118, 1.0)',
+          'rgba(123, 45, 100, 1.0)',
+          'rgba(90, 34, 56, 1.0)',
+          'rgba(100, 10, 10, 1.0)',
+        ],
+    }]
+}
 
   public dataSourceBar = {
-    datasets: [
-      {
+    labels: [],
+    datasets: [{
+        label: "Expenses",
         data: [],
-            backgroundColor: [
-                '#ffcd56',
-                '#ff6384',
-                '#36a2eb',
-                '#fd6b19',
-                '#99ff33',
-                '#ff9900',
-                '#00ffcc',
-                '#99ff99',
-                '#cc66ff',
-                '#cc6699',
-                '#3366cc',
-                '#660066',
-            ],
-      }
-    ],
-    labels: []
-  }
+        backgroundColor: [
+            'rgba(255, 99, 132,1.0)',
+            'rgba(54, 162, 235, 1.0)',
+            'rgba(255, 206, 86, 1.0)',
+            'rgba(75, 192, 192, 1.0)',
+            'rgba(153, 102, 255, 1.0)',
+            'rgba(140, 159, 86, 1.0)',
+            'rgba(78, 103, 4, 1.0)',
+            'rgba(250, 167, 118, 1.0)',
+            'rgba(123, 45, 100, 1.0)',
+            'rgba(90, 34, 56, 1.0)',
+            'rgba(100, 10, 10, 1.0)',
+        ],
+    }]
+}
 
   public dataSourceLine = {
     datasets: [
@@ -75,52 +68,62 @@ export class DataService {
     labels: []
   }
 
-  constructor(private http: HttpClient, public UserService:UserService) { }
+
+  public row = {
+    id:'',
+    title: '',
+    budget: '',
+    expense: '',
+    month: '',
+  }
+
+  constructor(private http: HttpClient,private snackBar: MatSnackBar) { }
+
 
   getBudgetData(){
-    console.log(this.UserService.user.username);
-    const url = 'http://localhost:3000/budget/' + this.UserService.user.username;
-
-    this.http.get(url)
-    .subscribe((res: any) => {
-      console.log("Budget: " + res);
-      // console.log(res.length);
-      for (var i = 0; i < res.length; i++){
-        this.dataSource.datasets[0].data[i] = res[i].total;
-        this.dataSource.labels[i] = res[i]._id;
-      }
-      console.log(this.dataSource);
-    });
+    const url = 'http://localhost:3000/budget/';
+    return this.http.get(url);
   }
 
   getExpenses(){
-    const url = 'http://localhost:3000/expenses/' + this.UserService.user.username;
-    this.http.get(url)
-    .subscribe((res: any) => {
-      console.log("Expenses: " + res);
-      // console.log(res.length);
-      for (var i = 0; i < res.length; i++){
-        this.dataSourceBar.datasets[0].data[i] = res[i].total;
-        this.dataSourceBar.labels[i] = res[i]._id;
-      }
-      console.log(this.dataSource);
-    });
+    const url = 'http://localhost:3000/expenses/';
+    return this.http.get(url);
   }
+
 
   getBudgetAnDExpenses(){
-    const url = 'http://localhost:3000/budget-expenses/' + this.UserService.user.username + "/Movies";
-    this.http.get(url)
-    .subscribe((res: any) => {
-      console.log("budget-expenses: " + res);
-      // console.log(res.length);
-      for (var i = 0; i < res.length; i++){
-        this.dataSourceLine.datasets[0].data[i] = res[i].totalBudget;
-        this.dataSourceLine.datasets[1].data[i] = res[i].totalExpense;
-        this.dataSourceLine.labels[i] = res[i]._id;
-      }
-      console.log(this.dataSource);
-    });
+    const url = 'http://localhost:3000/budget-expenses/';
+    return this.http.get(url);
   }
 
+  getTableData(){
+    const url = 'http://localhost:3000/tabledata/';
+    return this.http.get(url);
+  }
+
+  addBudget(payload){
+    return this.http.post(`http://localhost:3000/addbudget/`, payload)
+    .subscribe((res:any) =>{
+      console.log(res);
+    })
+  }
+
+  deleteBudget(id){
+    const url = 'http://localhost:3000/deletebudget/' +  id;
+    return this.http.delete(url)
+    .subscribe((res:any) =>{
+      console.log(res);
+    })
+  }
+
+  updateBudget(id,payload){
+    console.log(payload);
+    const url = 'http://localhost:3000/editbudget/' +  id;
+    console.log(url);
+    return this.http.put(url,payload)
+    .subscribe((res:any) =>{
+      console.log(res);
+    })
+  }
 
 }
