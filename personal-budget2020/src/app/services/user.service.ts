@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TokenService } from './token.service';
+
+const baseURL = 'http://localhost:3000';
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +21,13 @@ export class UserService {
   };
 
 
-  constructor(private http: HttpClient, private router: Router,private snackBar: MatSnackBar) {
+  constructor(private http: HttpClient, private router: Router,private snackBar: MatSnackBar, private tokenService: TokenService) {
 
   }
 
   createNewUser() {
-    return this.http.post(`http://localhost:3000/user/signup/`, this.user)
+    const url = baseURL + '/user/signup/';
+    return this.http.post(url, this.user)
     .subscribe(
       (res:any) => {
         if(res){
@@ -32,29 +36,30 @@ export class UserService {
           this.router.navigate([ '/login' ]);
         }
       },
-      // (err: HttpErrorResponse) => {
-      //   if (err.error.msg) {
-      //     this.snackBar.open(err.error.msg, 'Undo');
-      //   } else {
-      //     this.snackBar.open('Something Went Wrong!');
-      //   }
-      // }
+      (err: HttpErrorResponse) => {
+        if (err.error.msg) {
+          this.snackBar.open(err.error.msg, 'Undo');
+        } else {
+          this.snackBar.open('Something Went Wrong!');
+        }
+      }
     );
   }
 
-
-
   userLogin(username, password) {
-    return this.http.post(`http://localhost:3000/user/login`, {username, password})
+    this.tokenService.removeToken();
+    this.tokenService.removeRefreshToken();
+    const url = baseURL + '/user/login/';
+    return this.http.post(url, {username, password})
     .subscribe(
       (res:any) => {
         // console.log("login res");
         //console.log(res);
         if(res){
-          let token = res.token;
-          localStorage.setItem('Token', token);
-          // console.log("localstorage");
-          // console.log(localStorage.getItem('Token'));
+          //let token = res.token;
+          this.tokenService.saveToken(res.token);
+          this.tokenService.saveRefreshToken(res.refreshToken);
+          localStorage.setItem("username",username);
           this.router.navigate(['/dashboard']);
         }
       },
@@ -69,9 +74,21 @@ export class UserService {
     );
   }
 
+  refreshToken(){
+    this.tokenService.removeToken();
+    const token = this.tokenService.getRefreshToken();
+    const username = localStorage.getItem('username');
+    const url = baseURL + '/token/';
+    return this.http.post(url, {token,username})
+    .subscribe((res:any) => {
+        this.tokenService.saveToken(res.token);
+    })
+  }
+
   logout() {
-    localStorage.removeItem('Token');
-    localStorage.removeItem('currentUser');
+    this.tokenService.removeToken();
+    this.tokenService.removeRefreshToken();
+    localStorage.removeItem('username');
     this.router.navigate([ '/login' ]);
   }
 

@@ -12,14 +12,14 @@
 
     <div class="form">
       <mat-form-field color="accent">
-        <input matInput #inputstate class="form-control" placeholder="Budget" [(ngModel)]="data.budget" name="budget" maxlength="10" required >
+        <input matInput #inputstate class="form-control" placeholder="Budget" [(ngModel)]="data.budget" name="budget" required type="number" min="0">
         <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
       </mat-form-field>
     </div>
 
     <div class="form">
       <mat-form-field color="accent">
-        <input matInput placeholder="Expense" [(ngModel)]="data.expense" name="expense" required>
+        <input matInput placeholder="Expense" [(ngModel)]="data.expense" name="expense" required type="number" min="0">
         <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
       </mat-form-field>
     </div>

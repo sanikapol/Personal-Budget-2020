@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+const baseURL = 'http://localhost:3000';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -81,35 +83,36 @@ export class DataService {
 
 
   getBudgetData(){
-    const url = 'http://localhost:3000/budget/';
+    const url = baseURL + '/budget/';
     return this.http.get(url);
   }
 
   getExpenses(){
-    const url = 'http://localhost:3000/expenses/';
+    const url = baseURL + '/expenses/';
     return this.http.get(url);
   }
 
 
   getBudgetAnDExpenses(){
-    const url = 'http://localhost:3000/budget-expenses/';
+    const url = baseURL + '/budget-expenses/';
     return this.http.get(url);
   }
 
   getTableData(){
-    const url = 'http://localhost:3000/tabledata/';
+    const url = baseURL + '/tabledata/';
     return this.http.get(url);
   }
 
   addBudget(payload){
-    return this.http.post(`http://localhost:3000/addbudget/`, payload)
+    const url = baseURL + '/addbudget';
+    return this.http.post(url, payload)
     .subscribe((res:any) =>{
       console.log(res);
     })
   }
 
   deleteBudget(id){
-    const url = 'http://localhost:3000/deletebudget/' +  id;
+    const url = baseURL + '/deletebudget/' +  id;
     return this.http.delete(url)
     .subscribe((res:any) =>{
       console.log(res);
@@ -118,8 +121,8 @@ export class DataService {
 
   updateBudget(id,payload){
     console.log(payload);
-    const url = 'http://localhost:3000/editbudget/' +  id;
-    console.log(url);
+    const url = baseURL + '/editbudget/' +  id;
+    //console.log(url);
     return this.http.put(url,payload)
     .subscribe((res:any) =>{
       console.log(res);

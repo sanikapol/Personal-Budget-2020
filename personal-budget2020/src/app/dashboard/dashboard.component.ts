@@ -1,6 +1,9 @@
+import { HttpErrorResponse, HttpEvent } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Chart } from 'chart.js';
+import { of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { DataService } from '../services/data.service';
 
 

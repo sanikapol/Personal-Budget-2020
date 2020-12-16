@@ -49,6 +49,10 @@ userSchema.methods.generateJwtToken = async (payload, secret, expires) => {
     return jwt.sign(payload, secret, expires)
 }
 
+userSchema.methods.generateJwtRefreshToken = async (payload, secret, expires) => {
+    return jwt.sign(payload, secret, expires)
+}
+
 module.exports = mongoose.model('users',userSchema)
 
 userSchema.plugin(uniqueValidator, {
