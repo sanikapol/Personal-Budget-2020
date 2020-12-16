@@ -60,7 +60,7 @@ export class AddbudgetComponent implements OnInit {
   }
 
   public confirmAdd(): void {
-    console.log("budget to add");
+    //console.log("budget to add");
     this.dataService.row.title = this.data.title;
     this.dataService.row.budget = this.data.budget;
     this.dataService.row.expense = this.data.expense;
