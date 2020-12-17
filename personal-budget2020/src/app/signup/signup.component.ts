@@ -18,11 +18,11 @@ export class SignupComponent implements OnInit {
   constructor(private userService: UserService, private router: Router,private snackBar: MatSnackBar,private formBuilder: FormBuilder,) { }
 
   signupForm = new FormGroup({
-    firstname: new FormControl(''),
-    lastname: new FormControl(''),
-    email: new FormControl(''),
-    username: new FormControl(''),
-    password: new FormControl('')
+    firstname: new FormControl('',[Validators.required]),
+    lastname: new FormControl('',[Validators.required]),
+    email: new FormControl('',[Validators.required,Validators.email]),
+    username: new FormControl('',[Validators.required]),
+    password: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
   });
 
   async createUser() {
@@ -37,6 +37,14 @@ export class SignupComponent implements OnInit {
 
   }
 
+
+
+  getErrorMessage() {
+    return this.signupForm.hasError('required') ? 'Required field' :
+           this.signupForm.hasError('type') ? 'no numbers allowed' :
+           this.signupForm.hasError('email') ? 'invalid email' :
+        '';
+  }
 
   mapUser(){
     this.userService.user.firstname = this.signupForm.value.firstname;

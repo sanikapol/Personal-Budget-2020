@@ -61,30 +61,35 @@
         <form [formGroup]="signupForm" (submit)="createUser()">
           <mat-form-field style="width:400px !important">
             <mat-label>Firstname</mat-label>
-            <input formControlName="firstname" matInput>
+            <input formControlName="firstname" matInput required type="text">
+            <mat-error *ngIf="signupForm.invalid">{{getErrorMessage()}}</mat-error>
           </mat-form-field>
           <br>
           <mat-form-field style="width:400px !important">
             <mat-label>Lastname</mat-label>
-            <input formControlName="lastname" matInput>
+            <input formControlName="lastname" matInput required type="text">
+            <mat-error *ngIf="signupForm.invalid">{{getErrorMessage()}}</mat-error>
           </mat-form-field>
           <br>
           <mat-form-field style="width:400px !important">
             <mat-label>Email</mat-label>
-            <input formControlName="email" matInput>
+            <input formControlName="email" matInput required type="email">
+            <mat-error *ngIf="signupForm.invalid">{{getErrorMessage()}}</mat-error>
           </mat-form-field>
           <br>
           <mat-form-field style="width:400px !important">
             <mat-label>Username</mat-label>
-            <input formControlName="username" matInput>
+            <input formControlName="username" matInput required>
+            <mat-error *ngIf="signupForm.invalid">{{getErrorMessage()}}</mat-error>
           </mat-form-field>
           <br>
           <mat-form-field style="width:400px !important">
             <mat-label>Password</mat-label>
-            <input type="password" formControlName="password" matInput>
+            <input type="password" formControlName="password" matInput required minlength="6" maxlength="15">
+            <mat-error *ngIf="signupForm.invalid">{{getErrorMessage()}}</mat-error>
           </mat-form-field>
           <br>
-          <button mat-raised-button color="primary">Submit</button>
+          <button mat-raised-button color="primary" [disabled]="!signupForm.valid">Submit</button>
           <div class="divider"></div>
           <button mat-raised-button color="primary" (click)="cancel()" >Cancel</button>
         </form>

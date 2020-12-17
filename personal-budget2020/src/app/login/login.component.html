@@ -9,15 +9,15 @@
         <form [formGroup]="loginForm" (submit)="loginUser()">
           <mat-form-field style="width:400px !important">
             <mat-label>Username</mat-label>
-            <input formControlName="username" matInput>
+            <input formControlName="username" matInput required>
           </mat-form-field>
           <br>
           <mat-form-field style="width:400px !important">
             <mat-label>Password</mat-label>
-            <input type="password" formControlName="password" matInput>
+            <input type="password" formControlName="password" matInput required>
           </mat-form-field>
           <br>
-          <button type="submit" mat-raised-button color="primary">Submit</button>
+          <button type="submit" mat-raised-button color="primary" [disabled]="!loginForm.valid">Submit</button>
           <div class="divider"></div>
           <button mat-raised-button color="primary" (click)="gotoSignUp()" >SignUp</button>
         </form>

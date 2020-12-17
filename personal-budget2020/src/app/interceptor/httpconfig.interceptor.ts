@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { HttpEvent,HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpEvent,HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { TokenService } from '../services/token.service';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError, map } from 'rxjs/operators';
@@ -17,7 +17,12 @@ export class HttpConfigInterceptor implements HttpInterceptor {
 
       if(token){
         const authReq = req.clone({
-          headers: req.headers.set('Authorization', token)
+          //headers: req.headers.set('Authorization', token)
+          headers: new HttpHeaders({
+            'Content-Type':  'application/json',
+            'Authorization': token,
+            'Content-Transfer-Encoding':'application/gzip'
+          })
         });
         return next.handle(authReq).pipe(
           map((event: HttpEvent<any>) => {
