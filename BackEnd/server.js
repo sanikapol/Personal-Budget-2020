@@ -26,7 +26,8 @@ app.get('/', async(req,res) =>{
 
 //Sign up a new User
 app.post('/user/signup', async (req,res) => {  
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
         .then(async()=> {
             // console.log("Connected to DB from signup");
             // console.log(req.body);
@@ -46,14 +47,20 @@ app.post('/user/signup', async (req,res) => {
                       })
         })
         .catch((connectionError) => {
-            //console.log(connectionError);
+            console.log(connectionError);
             res.status(400).send();
         })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+    
     
 });
 
 app.post('/user/login',async (req,res) => {  
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
         .then(async()=> {
             //console.log("Connected to DB from login");
             const login = {
@@ -98,50 +105,61 @@ app.post('/user/login',async (req,res) => {
             }
         })
         .catch((connectionError) => {
-            //console.log(connectionError);
+            console.log(connectionError);
             res.status(400).send();
         })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+    
     
 });
 
 app.post('/token', async (req, res) => {
     //console.log(req.body);
-    const refreshToken = req.body.token
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
-    .then(async () => {
-        let user = await usersModel.findOne({
-            username: req.body.username
-        });
-        if (!user) {
-            res.status(400).json({
-                type: "Not Found",
-                msg: "Wrong Login Details"
-            })
-        }
-        if (refreshToken == null) return res.sendStatus(401)
-        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
-         
-        try {
-            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-            let accesstoken = await user.generateJwtToken({
-                user
-                }, process.env.ACCESS_TOKEN_SECRET, {
-                    expiresIn: '20s'
+    try {
+        const refreshToken = req.body.token
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+        .then(async () => {
+            let user = await usersModel.findOne({
+                username: req.body.username
+            });
+            if (!user) {
+                res.status(400).json({
+                    type: "Not Found",
+                    msg: "Wrong Login Details"
                 })
-                // console.log("accesstoken");
-                // console.log(accesstoken);
-              res.json({ token: accesstoken })
-        } catch (error) {
-            console.log(error);
-            return  res.sendStatus(403)
-        }
+            }
+            if (refreshToken == null) return res.sendStatus(401)
+            if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
             
-        
-    })
-    .catch((connectionError) => {
-        //console.log(connectionError);
+            try {
+                jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+                let accesstoken = await user.generateJwtToken({
+                    user
+                    }, process.env.ACCESS_TOKEN_SECRET, {
+                        expiresIn: '20s'
+                    })
+                    // console.log("accesstoken");
+                    // console.log(accesstoken);
+                res.json({ token: accesstoken })
+            } catch (error) {
+                console.log(error);
+                return  res.sendStatus(403)
+            }
+                
+            
+        })
+        .catch((connectionError) => {
+            console.log(connectionError);
+            res.status(400).send();
+        })
+    } catch (error) {
+        console.log(error);
         res.status(400).send();
-    })
+    }
+    
     
     
   });
@@ -149,55 +167,65 @@ app.post('/token', async (req, res) => {
 
 //Get yearly budget for a particular user
 app.get('/budget', authenticateToken, async(req,res) =>{
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+        .then(()=> {
+            //console.log("Connected to DB");
+            budgetsModel.aggregate([
+                { "$match": { user: req.userData.user.username } },
+                { "$group": { "_id": "$title", "total": { $sum: "$budget" } } }
+                ]).then((data) =>{
+                    //console.log(data);
+                    res.send(data);
+                    mongoose.connection.close();
+                })
+                .catch((connectionError) =>{
+                    console.log(connectionError);
+                })
+        })
+        .catch((connectionError) => {
+            console.log(connectionError);
+        })
     
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
-    .then(()=> {
-        //console.log("Connected to DB");
-        budgetsModel.aggregate([
-            { "$match": { user: req.userData.user.username } },
-            { "$group": { "_id": "$title", "total": { $sum: "$budget" } } }
-            ]).then((data) =>{
-                //console.log(data);
-                res.send(data);
-                mongoose.connection.close();
-            })
-            .catch((connectionError) =>{
-                console.log(connectionError);
-            })
-    })
-    .catch((connectionError) => {
-        console.log(connectionError);
-    })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
     
 });
 
 //Get month wise expenses for a user
 app.get('/expenses/', authenticateToken,async(req,res) =>{
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
-    .then(()=> {
-        //console.log("Connected to DB");
-        budgetsModel.aggregate([
-            { "$match": { user: req.userData.user.username } },
-            { "$group": { "_id": "$month", "total": { $sum: "$expense" } } }
-         ]).then((data) =>{
-                //console.log(data);
-                res.send(data);
-                mongoose.connection.close();
-            })
-            .catch((connectionError) =>{
-                console.log(connectionError);
-            })
-    })
-    .catch((connectionError) => {
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+        .then(()=> {
+            //console.log("Connected to DB");
+            budgetsModel.aggregate([
+                { "$match": { user: req.userData.user.username } },
+                { "$group": { "_id": "$month", "total": { $sum: "$expense" } } }
+            ]).then((data) =>{
+                    //console.log(data);
+                    res.send(data);
+                    mongoose.connection.close();
+                })
+                .catch((connectionError) =>{
+                    console.log(connectionError);
+                })
+        })
+        .catch((connectionError) => {
         //console.log(connectionError);
-    })
-    
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
     
 });
 
 // Get budget and expense for that item for whole year
 app.get('/budget-expenses/', authenticateToken,async(req,res) =>{
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
         .then(()=> {
             //console.log("Connected to DB");
             budgetsModel.aggregate([
@@ -215,12 +243,18 @@ app.get('/budget-expenses/', authenticateToken,async(req,res) =>{
         .catch((connectionError) => {
             //console.log(connectionError);
         })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+    
     
 });
 
 //Adding a new budget 
 app.post('/addbudget', authenticateToken, async (req,res) => { 
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
         .then(()=> {
             //console.log("Connected to DB from add budget");
             let data = new budgetsModel(req.body);
@@ -241,36 +275,47 @@ app.post('/addbudget', authenticateToken, async (req,res) => {
             console.log(connectionError);
             res.status(400).send();
         })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+    
     
 });
 
 //Changing an expense
 //To do...what if data does not exist
 app.put('/editbudget/:id', authenticateToken,async (req,res) => { 
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
-    .then(()=> {
-        let dataToUpdate = {$set: {budget: req.body.budget, expense: req.body.expense}};
-        budgetsModel.updateMany({_id: req.params.id}, dataToUpdate)
-                  .then((data) =>{
-                      //console.log(data);
-                      res.status(200).json({"msg":"Budget updated Successfully"});
-                      mongoose.connection.close();
-                  })
-                  .catch((connectionError) =>{
-                      console.log(connectionError);
-                  })
-    })
-    .catch((connectionError) => {
-        //console.log(connectionError);
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+        .then(()=> {
+            let dataToUpdate = {$set: {budget: req.body.budget, expense: req.body.expense}};
+            budgetsModel.updateMany({_id: req.params.id}, dataToUpdate)
+                    .then((data) =>{
+                        //console.log(data);
+                        res.status(200).json({"msg":"Budget updated Successfully"});
+                        mongoose.connection.close();
+                    })
+                    .catch((connectionError) =>{
+                        console.log(connectionError);
+                    })
+        })
+        .catch((connectionError) => {
+            //console.log(connectionError);
+            res.status(400).send();
+        })
+    } catch (error) {
+        console.log(error);
         res.status(400).send();
-    })
+    }
+    
     
 });
 
 //Get table data
 app.get('/tabledata', authenticateToken,async(req,res) =>{
-    
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
         .then(()=> {
             //console.log("Connected to DB from tabledata");
             budgetsModel.find({user:req.userData.user.username})
@@ -286,43 +331,59 @@ app.get('/tabledata', authenticateToken,async(req,res) =>{
         .catch((connectionError) => {
             console.log(connectionError);
         })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+    
     
 });
 
 app.delete('/deletebudget/:id', authenticateToken,async(req,res) => {
-    mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
-    .then(()=> {
-        // console.log("Connected to DB from deletebugdet");
-        // console.log(req.params.id)
-        budgetsModel.deleteOne({_id: req.params.id })
-            .then((data) =>{
-                //console.log(data);
-                res.send(data);
-                mongoose.connection.close();
-            })
-            .catch((connectionError) =>{
-                console.log(connectionError);
-            })
-    })
-    .catch((connectionError) => {
-        console.log(connectionError);
-    })
+    try {
+        mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true} )
+        .then(()=> {
+            // console.log("Connected to DB from deletebugdet");
+            // console.log(req.params.id)
+            budgetsModel.deleteOne({_id: req.params.id })
+                .then((data) =>{
+                    //console.log(data);
+                    res.send(data);
+                    mongoose.connection.close();
+                })
+                .catch((connectionError) =>{
+                    console.log(connectionError);
+                })
+        })
+        .catch((connectionError) => {
+            console.log(connectionError);
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+    
 })
 
 function authenticateToken(req, res, next) {
-    
-    const token = req.headers.authorization.replace("Bearer ", "");
-    if (token == null) return res.status(401).json({
-        message: "Authentification Failed"
-    });
-
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.status(401).json({
+    try {
+        const token = req.headers.authorization.replace("Bearer ", "");
+        if (token == null) return res.status(401).json({
             message: "Authentification Failed"
         });
-        req.userData = user
-        next()
-    })
+
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (err) return res.status(401).json({
+                message: "Authentification Failed"
+            });
+            req.userData = user
+            next()
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+    
   }
 
   app.listen(port, () => {

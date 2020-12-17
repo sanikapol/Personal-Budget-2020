@@ -4,8 +4,10 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TokenService } from './token.service';
+import { DataService } from './data.service';
 
-const baseURL = 'http://198.199.69.99:3000';
+const baseURL = 'http://localhost:3000';
+// const baseURL = 'http://198.199.69.99:3000';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +23,7 @@ export class UserService {
   };
 
 
-  constructor(private http: HttpClient, private router: Router,private snackBar: MatSnackBar, private tokenService: TokenService) {
+  constructor(private http: HttpClient, private router: Router,private snackBar: MatSnackBar, private tokenService: TokenService,private dataService: DataService) {
 
   }
 
@@ -47,6 +49,68 @@ export class UserService {
   }
 
   userLogin(username, password) {
+    this.dataService.dataSource = {
+      labels: [],
+      datasets: [{
+          data: [],
+          backgroundColor: [
+            'rgba(255, 99, 132,1.0)',
+            'rgba(54, 162, 235, 1.0)',
+            'rgba(255, 206, 86, 1.0)',
+            'rgba(75, 192, 192, 1.0)',
+            'rgba(153, 102, 255, 1.0)',
+            'rgba(140, 159, 86, 1.0)',
+            'rgba(78, 103, 4, 1.0)',
+            'rgba(250, 167, 118, 1.0)',
+            'rgba(123, 45, 100, 1.0)',
+            'rgba(90, 34, 56, 1.0)',
+            'rgba(100, 10, 10, 1.0)',
+          ],
+      }]
+  }
+
+  this.dataService.dataSourceBar = {
+    labels: [],
+    datasets: [{
+        label: "Expenses",
+        data: [],
+        backgroundColor: [
+            'rgba(255, 99, 132,1.0)',
+            'rgba(54, 162, 235, 1.0)',
+            'rgba(255, 206, 86, 1.0)',
+            'rgba(75, 192, 192, 1.0)',
+            'rgba(153, 102, 255, 1.0)',
+            'rgba(140, 159, 86, 1.0)',
+            'rgba(78, 103, 4, 1.0)',
+            'rgba(250, 167, 118, 1.0)',
+            'rgba(123, 45, 100, 1.0)',
+            'rgba(90, 34, 56, 1.0)',
+            'rgba(100, 10, 10, 1.0)',
+        ],
+    }]
+}
+
+this.dataService.dataSourceLine = {
+  datasets: [
+    {
+      label: "Budget",
+      data: [],
+      backgroundColor: 'rgb(90, 255, 132)',
+      borderColor: 'rgb(90, 255, 132)',
+      fill: false,
+    },
+    {
+      label: "Spent",
+      data: [],
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      fill: false,
+    }
+  ],
+  labels: []
+}
+
+
     this.tokenService.removeToken();
     this.tokenService.removeRefreshToken();
     const url = baseURL + '/user/login/';
