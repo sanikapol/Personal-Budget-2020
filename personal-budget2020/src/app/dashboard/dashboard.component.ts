@@ -1,10 +1,8 @@
-import { HttpErrorResponse, HttpEvent } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Chart } from 'chart.js';
-import { of, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { DataService } from '../services/data.service';
+
 
 
 @Component({
@@ -14,7 +12,7 @@ import { DataService } from '../services/data.service';
 })
 export class DashboardComponent implements OnInit {
 
-  isChartVisible = true;
+  //IsWait = true;
   constructor(private dataService: DataService,private router: Router) { }
 
   ngOnInit(): void {
@@ -37,56 +35,49 @@ export class DashboardComponent implements OnInit {
         }
         //console.log(this.dataSource);
         this.createBudgetChart();
+
+        this.dataService.getExpenses()
+        .subscribe((res: any) => {
+          // console.log("Expenses");
+          // console.log(res);
+          if(res.length == 0){
+            this.router.navigate(['/configurebudget']);
+          }
+          else{
+            for (var i = 0; i < res.length; i++){
+              this.dataService.dataSourceBar.datasets[0].data[i] = res[i].total;
+              this.dataService.dataSourceBar.labels[i] = res[i]._id;
+            }
+            this.createExpensesChart();
+
+            this.dataService.getBudgetAnDExpenses()
+            .subscribe((res: any) => {
+              //console.log(res);
+              // console.log(res.length);
+              if(res.length == 0){
+                this.router.navigate(['/configurebudget'])
+              }else{
+                for (var i = 0; i < res.length; i++){
+                  this.dataService.dataSourceLine.datasets[0].data[i] = res[i].totalBudget;
+                  this.dataService.dataSourceLine.datasets[1].data[i] = res[i].totalExpense;
+                  this.dataService.dataSourceLine.labels[i] = res[i]._id;
+                }
+                //console.log(this.dataService.dataSourceLine);
+                this.createBudgetVsExpensesChart();
+                //this.IsWait = false;
+              }
+
+            });
+          }
+
+        });
       }
 
     });
 
-    this.dataService.getExpenses()
-    .subscribe((res: any) => {
-      // console.log("Expenses");
-      // console.log(res);
-      if(res.length == 0){
-        this.router.navigate(['/configurebudget']);
-      }
-      else{
-        for (var i = 0; i < res.length; i++){
-          this.dataService.dataSourceBar.datasets[0].data[i] = res[i].total;
-          this.dataService.dataSourceBar.labels[i] = res[i]._id;
-        }
-        this.createExpensesChart();
-      }
 
-    });
 
-    this.dataService.getBudgetAnDExpenses()
-    .subscribe((res: any) => {
-      // console.log("budget-expenses: " + res);
-      // console.log(res.length);
-      if(res.length == 0){
-        this.router.navigate(['/configurebudget'])
-      }else{
-        for (var i = 0; i < res.length; i++){
-          this.dataService.dataSourceLine.datasets[0].data[i] = res[i].totalBudget;
-          this.dataService.dataSourceLine.datasets[1].data[i] = res[i].totalExpense;
-          this.dataService.dataSourceLine.labels[i] = res[i]._id;
-        }
-        //console.log(this.dataService.dataSourceLine);
-        this.createBudgetVsExpensesChart();
-      }
 
-    });
-
-  }
-
-  loadPieData(){
-
-  }
-
-  loadBarData(){
-
-  }
-
-  loadLineData(){
 
   }
 

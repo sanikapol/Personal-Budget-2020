@@ -83,7 +83,7 @@ app.post('/user/login',async (req,res) => {
                 let token = await user.generateJwtToken({
                     user
                 }, process.env.ACCESS_TOKEN_SECRET, {
-                    expiresIn: '20s'
+                    expiresIn: '15m'
                 })
                 let refreshToken = await user.generateJwtRefreshToken({
                     user

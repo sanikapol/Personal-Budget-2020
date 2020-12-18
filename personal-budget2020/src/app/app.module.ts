@@ -31,6 +31,7 @@ import { AddbudgetComponent } from './addbudget/addbudget.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -65,6 +66,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatDialogModule,
     MatIconModule,
     MatToolbarModule,
+    MatProgressSpinnerModule,
   ],
   providers: [DataService,UserService,
     {
